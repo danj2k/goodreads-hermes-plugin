@@ -27,6 +27,7 @@ _TOOL_MAP = [
     ("get_book_details",       schemas.GET_BOOK_DETAILS,        tools.get_book_details),
     ("get_rating_distribution",schemas.GET_RATING_DISTRIBUTION, tools.get_rating_distribution),
     ("get_unrated_read_books", schemas.GET_UNRATED_READ_BOOKS,  tools.get_unrated_read_books),
+    ("lookup_book",           schemas.LOOKUP_BOOK,              tools.lookup_book),
 ]
 
 

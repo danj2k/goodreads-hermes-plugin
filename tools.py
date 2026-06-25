@@ -617,3 +617,50 @@ def get_unrated_read_books(args: dict, **kwargs) -> str:
         return _ok({"unrated_read_books": rows, "count": len(rows)})
     except Exception as exc:
         return _err(str(exc))
+
+
+# ---------------------------------------------------------------------------
+# 13. lookup_book
+# ---------------------------------------------------------------------------
+
+def lookup_book(args: dict, **kwargs) -> str:
+    """Exact title+author existence check (case-insensitive)."""
+    try:
+        title = args.get("title", "").strip()
+        author = args.get("author", "").strip()
+        if not title or not author:
+            return _err("Both 'title' and 'author' parameters are required.")
+        shelf = args.get("shelf")
+
+        params: list = [title.lower(), author.lower()]
+        extra = ""
+        if shelf:
+            extra = " AND b.exclusive_shelf = ?"
+            params.append(shelf)
+
+        sql = f"""\
+            SELECT
+                b.book_id, b.book_title, a.author_name,
+                b.rating AS user_rating, b.average_rating AS global_avg,
+                b.year_first_published, b.num_pages, b.exclusive_shelf
+            FROM books b
+            LEFT JOIN authors a ON a.author_id = b.author_id
+            WHERE LOWER(b.book_title) = ?
+              AND LOWER(a.author_name) = ?{extra}
+            LIMIT 1
+        """
+
+        with _connect() as conn:
+            row = conn.execute(sql, params).fetchone()
+
+        if row:
+            return _ok({
+                "found": True,
+                "book": dict(row),
+            })
+        return _ok({
+            "found": False,
+            "message": f"No book titled '{title}' by '{author}' found in the library.",
+        })
+    except Exception as exc:
+        return _err(str(exc))

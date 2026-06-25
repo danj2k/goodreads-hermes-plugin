@@ -57,3 +57,7 @@ If `GOODREADS_DB_PATH` is not set, the function raises `RuntimeError` immediatel
 ## Limit clamping
 
 Every handler clamps its `limit` parameter to a hard maximum (100, 200, or 500 depending on the tool). This prevents a misbehaving LLM from requesting millions of rows. The minimum is always 1.
+
+## `lookup_book` exact matching
+
+The `lookup_book` tool uses `LOWER()` on both sides of the comparison (`LOWER(b.book_title) = ?` and `LOWER(a.author_name) = ?`) with the input pre-lowercased in Python. This gives case-insensitive exact matching — "Salvos" matches "Salvos" but not "Salvos 2". The query takes both title and author as required parameters and returns a boolean `found` flag with the matching book details when found. This was added to solve the problem of `search_books` returning too many fuzzy matches when the user needs a precise "does this exact book by this exact author exist?" answer.

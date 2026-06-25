@@ -360,3 +360,36 @@ GET_UNRATED_READ_BOOKS = {
         "required": [],
     },
 }
+
+LOOKUP_BOOK = {
+    "name": "lookup_book",
+    "description": (
+        "Check whether a specific book by a specific author exists in the user's "
+        "library.  Performs case-insensitive exact matching on both title and author "
+        "name.  Returns a definitive yes/no answer with matching book details when "
+        "found.  Use this when someone asks 'does the user have [title] by [author]' "
+        "or 'is [title] by [author] on their shelves' — i.e. precise existence checks "
+        "where search_books would return too many fuzzy matches."
+    ),
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "title": {
+                "type": "string",
+                "description": "Exact book title to match (case-insensitive).",
+            },
+            "author": {
+                "type": "string",
+                "description": "Exact author name to match (case-insensitive).",
+            },
+            "shelf": {
+                "type": "string",
+                "description": (
+                    "Restrict to a specific shelf (e.g. 'read', 'to-read'). "
+                    "Omit to search the entire library."
+                ),
+            },
+        },
+        "required": ["title", "author"],
+    },
+}

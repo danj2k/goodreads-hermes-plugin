@@ -9,8 +9,8 @@ The plugin is a thin adapter between Hermes Agent's tool system and a local SQLi
 ```
 plugin.yaml          — Plugin metadata and env requirements
 __init__.py          — Registration: maps tool names → schemas + handlers
-schemas.py           — 12 tool schemas (what the LLM sees)
-tools.py             — 12 tool handlers (the actual SQL queries)
+schemas.py           — 13 tool schemas (what the LLM sees)
+tools.py             — 13 tool handlers (the actual SQL queries)
 ```
 
 ### Registration (`__init__.py`)
