@@ -12,14 +12,14 @@ The plugin registers 14 tools under the `goodreads` toolset:
 | `get_top_rated_books` | Books the user rated most highly |
 | `get_books_by_shelf` | List books on a specific shelf, sorted by rating (supports count-only mode) |
 | `get_shelf_list` | All shelves with book counts |
-| `get_books_by_genre` | Books matching a genre, optionally filtered by shelf or rating |
+| `get_books_by_genre` | Books matching a genre, optionally filtered by shelf or rating (supports count-only mode) |
 | `get_genre_preferences` | Genre breakdown with average ratings and top-rated book per genre |
 | `get_author_stats` | Per-author reading stats: books read, average rating, titles |
 | `get_book_details` | Full details for a single book by ID or title |
 | `search_books` | Full-text search across titles, authors, and descriptions |
 | `lookup_book` | Exact case-insensitive title + author match (precise yes/no lookup) |
 | `lookup_books` | Batch version of lookup_book — check multiple title+author pairs in one call |
-| `get_reading_timeline` | Books grouped by year or month, with date-read metadata |
+| `get_reading_timeline` | Books grouped by year or month, with date-read metadata (supports count-only mode) |
 | `get_rating_distribution` | Star-rating histogram with counts and percentages |
 | `get_unrated_read_books` | Finished books with no user rating |
 
@@ -102,8 +102,11 @@ Start a conversation and ask something like:
 
 > "What's on my to-read shelf?"
 > "How many books are on my to-read shelf?"
+> "How many LitRPG books have I read?"
+> "How many books did I read in 2023?"
+> "Do I have Salvos by V.A. Lewis in my library?"
 
-The agent should call `get_books_by_shelf` and return your books. The second example uses `count_only` mode to return just the number without the full list. You can also check that the tools are registered by running `hermes tools` and looking for tools prefixed with `goodreads:`.
+The agent should call the appropriate tool and return your books. The second, third, and fourth examples use `count_only` mode to return just the number without the full list. You can also check that the tools are registered by running `hermes tools` and looking for tools prefixed with `goodreads:`.
 
 ## How it works
 

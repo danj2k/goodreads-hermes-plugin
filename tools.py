@@ -154,6 +154,7 @@ def get_books_by_genre(args: dict, **kwargs) -> str:
         shelf = args.get("shelf")
         min_rating = args.get("min_rating")
         limit = min(int(args.get("limit", 20)), 200)
+        count_only = bool(args.get("count_only", False))
 
         params: list = [f"%{genre}%"]
         extra = ""
@@ -164,24 +165,33 @@ def get_books_by_genre(args: dict, **kwargs) -> str:
             extra += " AND b.rating >= ?"
             params.append(int(min_rating))
 
-        sql = f"""
-            SELECT
-                b.book_id, b.book_title, a.author_name,
-                b.rating AS user_rating, b.average_rating AS global_avg,
-                b.year_first_published, b.exclusive_shelf,
-                GROUP_CONCAT(g2.genre, ', ') AS all_genres
-            FROM book_genres g
-            JOIN books b ON b.book_id = g.book_id
-            LEFT JOIN authors a ON a.author_id = b.author_id
-            LEFT JOIN book_genres g2 ON g2.book_id = b.book_id
-            WHERE g.genre LIKE ?{extra}
-            GROUP BY b.book_id
-            ORDER BY b.rating DESC NULLS LAST, b.average_rating DESC
-            LIMIT ?
-        """
-        params.append(limit)
-
         with _connect() as conn:
+            if count_only:
+                count = conn.execute(
+                    f"SELECT COUNT(DISTINCT b.book_id) "
+                    f"FROM book_genres g "
+                    f"JOIN books b ON b.book_id = g.book_id "
+                    f"WHERE g.genre LIKE ?{extra}",
+                    params,
+                ).fetchone()[0]
+                return _ok({"genre_query": genre, "shelf": shelf, "count": count})
+
+            sql = f"""
+                SELECT
+                    b.book_id, b.book_title, a.author_name,
+                    b.rating AS user_rating, b.average_rating AS global_avg,
+                    b.year_first_published, b.exclusive_shelf,
+                    GROUP_CONCAT(g2.genre, ', ') AS all_genres
+                FROM book_genres g
+                JOIN books b ON b.book_id = g.book_id
+                LEFT JOIN authors a ON a.author_id = b.author_id
+                LEFT JOIN book_genres g2 ON g2.book_id = b.book_id
+                WHERE g.genre LIKE ?{extra}
+                GROUP BY b.book_id
+                ORDER BY b.rating DESC NULLS LAST, b.average_rating DESC
+                LIMIT ?
+            """
+            params.append(limit)
             rows = _rows_to_list(conn.execute(sql, params).fetchall())
 
         return _ok({"genre_query": genre, "books": rows, "count": len(rows)})
@@ -382,6 +392,7 @@ def get_reading_timeline(args: dict, **kwargs) -> str:
         end_date = args.get("end_date")
         aggregate_by = args.get("aggregate_by", "none")
         limit = min(int(args.get("limit", 50)), 500)
+        count_only = bool(args.get("count_only", False))
 
         params: list = []
         date_filter = ""
@@ -396,6 +407,16 @@ def get_reading_timeline(args: dict, **kwargs) -> str:
             params.append(end_date)
 
         with _connect() as conn:
+            if count_only:
+                count = conn.execute(
+                    f"SELECT COUNT(DISTINCT b.book_id) "
+                    f"FROM book_dates_read d "
+                    f"JOIN books b ON b.book_id = d.book_id "
+                    f"WHERE d.date_read IS NOT NULL{date_filter}",
+                    params,
+                ).fetchone()[0]
+                return _ok({"year": year, "count": count})
+
             if aggregate_by == "year":
                 sql = f"""
                     SELECT

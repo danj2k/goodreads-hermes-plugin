@@ -93,6 +93,13 @@ GET_BOOKS_BY_GENRE = {
                 "minimum": 1,
                 "maximum": 200,
             },
+            "count_only": {
+                "type": "boolean",
+                "description": (
+                    "When true, return only the count of matching books instead "
+                    "of the full list. Useful for 'how many' questions."
+                ),
+            },
         },
         "required": ["genre"],
     },
@@ -261,6 +268,13 @@ GET_READING_TIMELINE = {
                 "description": "Maximum rows to return. Default 50.",
                 "minimum": 1,
                 "maximum": 500,
+            },
+            "count_only": {
+                "type": "boolean",
+                "description": (
+                    "When true, return only the count of matching books instead "
+                    "of the full list. Useful for 'how many books did I read' questions."
+                ),
             },
         },
         "required": [],

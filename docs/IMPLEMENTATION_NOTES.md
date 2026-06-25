@@ -56,6 +56,14 @@ The handler pre-fills all five star values plus "None" in the distribution dict,
 
 Date filtering uses SQLite's `SUBSTR()` to extract year or year-month from `date_read` strings (stored as ISO format). The `LIKE` operator handles partial date matching (e.g., `LIKE '2023%'` matches all of 2023). This avoids SQLite's limited date parsing functions.
 
+### Count-only mode
+
+When `count_only` is true, the handler returns just a count of distinct books matching the date filter (`{"year": ..., "count": N}`), bypassing the three aggregation branches entirely. This is the simplest count-only implementation — a single `SELECT COUNT(DISTINCT b.book_id)` with the same date filter.
+
+## `get_books_by_genre` count-only mode
+
+When `count_only` is true, the handler returns a count of distinct books matching the genre (and optional shelf/rating filters) without fetching the full book list. The response is `{"genre_query": ..., "shelf": ..., "count": N}`. This exists for the same reason as `get_books_by_shelf` count-only: questions like "how many LitRPG books are there?" don't need hundreds of book entries, just a number.
+
 ## `_db_path()` error handling
 
 If `GOODREADS_DB_PATH` is not set, the function raises `RuntimeError` immediately. This is the one place handlers are allowed to raise — it's a configuration error that should fail loudly rather than returning a confusing "no such table" error.
