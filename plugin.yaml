@@ -1,0 +1,26 @@
+name: goodreads
+version: 1.0.0
+description: >
+  Query the user's local Goodreads SQLite export to surface their book
+  preferences, reading history, genre affinities, author stats, and shelf
+  contents — without needing to write SQL.
+author: Hermes Plugin
+
+requires_env:
+  - name: GOODREADS_DB_PATH
+    description: "Absolute path to the Goodreads SQLite database file (e.g. /home/user/goodreads.db)"
+    secret: false
+
+provides_tools:
+  - get_reading_stats
+  - get_top_rated_books
+  - get_books_by_genre
+  - get_genre_preferences
+  - get_author_stats
+  - get_books_by_shelf
+  - get_shelf_list
+  - get_reading_timeline
+  - search_books
+  - get_book_details
+  - get_rating_distribution
+  - get_unrated_read_books
