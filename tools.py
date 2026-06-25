@@ -587,7 +587,66 @@ def get_rating_distribution(args: dict, **kwargs) -> str:
 
 
 # ---------------------------------------------------------------------------
-# 12. get_unrated_read_books
+# 12. lookup_books (batch)
+# ---------------------------------------------------------------------------
+
+def lookup_books(args: dict, **kwargs) -> str:
+    """Batch-check multiple title+author pairs against the library."""
+    try:
+        queries = args.get("queries", [])
+        if not queries:
+            return _err("'queries' parameter is required and must be a non-empty list.")
+
+        shelf = args.get("shelf")
+        shelf_clause = " AND b.exclusive_shelf = ?" if shelf else ""
+
+        sql = f"""\
+            SELECT b.book_id, b.book_title, a.author_name,
+                   b.rating AS user_rating, b.average_rating AS global_avg,
+                   b.year_first_published, b.num_pages, b.exclusive_shelf
+            FROM books b
+            LEFT JOIN authors a ON a.author_id = b.author_id
+            WHERE LOWER(b.book_title) = ?
+              AND LOWER(a.author_name) = ?
+              {shelf_clause}
+            ORDER BY b.rating DESC NULLS LAST
+            LIMIT 5
+        """
+
+        results = []
+        with _connect() as conn:
+            for q in queries:
+                title = (q.get("title") or "").strip()
+                author = (q.get("author") or "").strip()
+                if not title or not author:
+                    results.append({"title": title, "author": author, "found": False,
+                                    "error": "Both title and author are required."})
+                    continue
+
+                params = [title.lower(), author.lower()]
+                if shelf:
+                    params.append(shelf)
+                row = conn.execute(sql, params).fetchone()
+
+                if row:
+                    results.append({"title": title, "author": author, "found": True,
+                                    "book": dict(row)})
+                else:
+                    results.append({"title": title, "author": author, "found": False})
+
+        found_count = sum(1 for r in results if r["found"])
+        return _ok({
+            "results": results,
+            "total": len(results),
+            "found": found_count,
+            "not_found": len(results) - found_count,
+        })
+    except Exception as exc:
+        return _err(str(exc))
+
+
+# ---------------------------------------------------------------------------
+# 13. get_unrated_read_books
 # ---------------------------------------------------------------------------
 
 def get_unrated_read_books(args: dict, **kwargs) -> str:
@@ -620,7 +679,7 @@ def get_unrated_read_books(args: dict, **kwargs) -> str:
 
 
 # ---------------------------------------------------------------------------
-# 13. lookup_book
+# 14. lookup_book
 # ---------------------------------------------------------------------------
 
 def lookup_book(args: dict, **kwargs) -> str:

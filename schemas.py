@@ -361,6 +361,51 @@ GET_UNRATED_READ_BOOKS = {
     },
 }
 
+LOOKUP_BOOKS = {
+    "name": "lookup_books",
+    "description": (
+        "Batch-check whether multiple books exist in the user's library. "
+        "Accepts a list of title+author pairs and returns the match status "
+        "for each in a single call.  Each pair uses case-insensitive exact "
+        "matching on both title and author name.  Use this when checking a "
+        "list of candidate books against the library at once — "
+        "significantly faster than calling lookup_book multiple times."
+    ),
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "queries": {
+                "type": "array",
+                "description": "List of {title, author} pairs to look up.",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "title": {
+                            "type": "string",
+                            "description": "Exact book title to match (case-insensitive).",
+                        },
+                        "author": {
+                            "type": "string",
+                            "description": "Exact author name to match (case-insensitive).",
+                        },
+                    },
+                    "required": ["title", "author"],
+                },
+                "minItems": 1,
+                "maxItems": 50,
+            },
+            "shelf": {
+                "type": "string",
+                "description": (
+                    "Restrict all lookups to a specific shelf (e.g. 'read', 'to-read'). "
+                    "Omit to search the entire library."
+                ),
+            },
+        },
+        "required": ["queries"],
+    },
+}
+
 LOOKUP_BOOK = {
     "name": "lookup_book",
     "description": (

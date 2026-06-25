@@ -4,7 +4,7 @@ A [Hermes Agent](https://hermes-agent.nousresearch.com) plugin that gives your L
 
 ## What it does
 
-The plugin registers 13 tools under the `goodreads` toolset:
+The plugin registers 14 tools under the `goodreads` toolset:
 
 | Tool | Purpose |
 |------|---------|
@@ -18,6 +18,7 @@ The plugin registers 13 tools under the `goodreads` toolset:
 | `get_book_details` | Full details for a single book by ID or title |
 | `search_books` | Full-text search across titles, authors, and descriptions |
 | `lookup_book` | Exact case-insensitive title + author match (precise yes/no lookup) |
+| `lookup_books` | Batch version of lookup_book — check multiple title+author pairs in one call |
 | `get_reading_timeline` | Books grouped by year or month, with date-read metadata |
 | `get_rating_distribution` | Star-rating histogram with counts and percentages |
 | `get_unrated_read_books` | Finished books with no user rating |

@@ -61,3 +61,11 @@ Every handler clamps its `limit` parameter to a hard maximum (100, 200, or 500 d
 ## `lookup_book` exact matching
 
 The `lookup_book` tool uses `LOWER()` on both sides of the comparison (`LOWER(b.book_title) = ?` and `LOWER(a.author_name) = ?`) with the input pre-lowercased in Python. This gives case-insensitive exact matching — "Salvos" matches "Salvos" but not "Salvos 2". The query takes both title and author as required parameters and returns a boolean `found` flag with the matching book details when found. This was added to solve the problem of `search_books` returning too many fuzzy matches when the user needs a precise "does this exact book by this exact author exist?" answer.
+
+## `lookup_books` batch exact matching
+
+The `lookup_books` tool accepts a list of `{title, author}` pairs and runs the same `LOWER() =` exact-match query for each within a single DB connection. This is the batch equivalent of `lookup_book` — same matching semantics, but avoids the overhead of multiple round-trips when checking 10+ books against the library at once.
+
+The iteration approach (one query per pair within a single connection) was chosen over a single multi-OR query because it keeps the mapping from input to results trivial — each input pair produces exactly one result entry with its own `found` flag. The per-query cost is negligible since each is an indexed exact-match lookup.
+
+The response includes aggregate counts (`total`, `found`, `not_found`) so the caller can quickly gauge how many matches there were without counting the results array.
