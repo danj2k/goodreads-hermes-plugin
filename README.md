@@ -27,7 +27,7 @@ When the plugin is active, the agent can answer questions like "What are my high
 
 1. **Hermes Agent** installed and working. See the [Hermes documentation](https://hermes-agent.nousresearch.com/docs) for setup instructions.
 
-2. **A Goodreads SQLite database** — the plugin reads from a local SQLite file created by a companion scraper (e.g. [goodreads-user-scraper](https://github.com/nicholasgasior/goodreads-user-scraper) or similar). The database must contain these tables:
+2. **A Goodreads SQLite database** — the plugin reads from a local SQLite file created by a companion scraper (e.g. [goodreads-user-scraper](https://github.com/danj2k/goodreads-hermes-plugin)). The database must contain these tables:
 
    | Table | Purpose |
    |-------|---------|
@@ -47,7 +47,7 @@ This plugin is installed as a **user plugin** — a folder placed in Hermes's pl
 Clone this repository (or copy the folder) into your Hermes plugins directory. The folder **must** be named exactly `goodreads` to match the `name` field in `plugin.yaml`:
 
 ```bash
-git clone https://github.com/<your-org>/goodreads.git ~/.hermes/plugins/goodreads
+git clone https://github.com/danj2k/goodreads-hermes-plugin ~/.hermes/plugins/goodreads
 ```
 
 Alternatively, if you already have the source:
