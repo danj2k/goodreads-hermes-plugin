@@ -4,7 +4,7 @@ A [Hermes Agent](https://hermes-agent.nousresearch.com) plugin that gives your L
 
 ## What it does
 
-The plugin registers 12 tools under the `goodreads` toolset:
+The plugin registers 13 tools under the `goodreads` toolset:
 
 | Tool | Purpose |
 |------|---------|
@@ -17,11 +17,12 @@ The plugin registers 12 tools under the `goodreads` toolset:
 | `get_author_stats` | Per-author reading stats: books read, average rating, titles |
 | `get_book_details` | Full details for a single book by ID or title |
 | `search_books` | Full-text search across titles, authors, and descriptions |
+| `lookup_book` | Exact case-insensitive title + author match (precise yes/no lookup) |
 | `get_reading_timeline` | Books grouped by year or month, with date-read metadata |
 | `get_rating_distribution` | Star-rating histogram with counts and percentages |
 | `get_unrated_read_books` | Finished books with no user rating |
 
-When the plugin is active, the agent can answer questions like "What are my highest-rated sci-fi books?" or "How many books did I read last year?" without you needing to write any SQL.
+When the plugin is active, the agent can answer questions like "What are my highest-rated sci-fi books?", "How many books did I read last year?", or "Do I have Salvos by V.A. Lewis in my library?" without you needing to write any SQL.
 
 ## Prerequisites
 
