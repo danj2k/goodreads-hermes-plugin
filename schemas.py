@@ -196,6 +196,13 @@ GET_BOOKS_BY_SHELF = {
                 "minimum": 1,
                 "maximum": 500,
             },
+            "count_only": {
+                "type": "boolean",
+                "description": (
+                    "When true, return only the count of matching books instead "
+                    "of the full list. Useful for 'how many books' questions."
+                ),
+            },
         },
         "required": ["shelf"],
     },

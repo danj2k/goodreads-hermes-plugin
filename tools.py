@@ -284,8 +284,26 @@ def get_books_by_shelf(args: dict, **kwargs) -> str:
         if not shelf:
             return _err("'shelf' parameter is required.")
         limit = min(int(args.get("limit", 25)), 500)
+        count_only = bool(args.get("count_only", False))
 
         with _connect() as conn:
+            # Count-only mode: single COUNT(*) query, no book list
+            if count_only:
+                # Try custom shelves first (more specific match)
+                count = conn.execute(
+                    "SELECT COUNT(*) FROM book_shelves bs "
+                    "JOIN books b ON b.book_id = bs.book_id "
+                    "WHERE bs.shelf_name LIKE ?",
+                    [f"%{shelf}%"],
+                ).fetchone()[0]
+                if count == 0:
+                    # Fall back to exclusive shelf
+                    count = conn.execute(
+                        "SELECT COUNT(*) FROM books "
+                        "WHERE exclusive_shelf LIKE ?",
+                        [f"%{shelf}%"],
+                    ).fetchone()[0]
+                return _ok({"shelf": shelf, "count": count})
             # Try exclusive shelf first
             rows = _rows_to_list(conn.execute(
                 """

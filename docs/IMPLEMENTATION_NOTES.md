@@ -25,6 +25,12 @@ This handler runs two queries: one against `books.exclusive_shelf` and one again
 
 This exists because Goodreads has two separate shelf systems: the three exclusive shelves (read/to-read/currently-reading) live on the `books` table directly, while user-created tag shelves live in the `book_shelves` junction table.
 
+### Count-only mode
+
+When `count_only` is true, the handler short-circuits before the normal dual-query path. It runs a single `SELECT COUNT(*)` query instead — trying custom shelves first (since they're more specific), then falling back to the exclusive shelf if no custom matches are found. The response is `{"shelf": ..., "count": N}` with no book list.
+
+This exists because questions like "how many books are on my to-read shelf?" don't need the full book list — returning hundreds of book entries just to count them wastes thousands of context tokens. The count path uses the same `LIKE` matching as the normal path for consistency.
+
 ## `search_books` relevance ordering
 
 The search query uses a CASE expression to boost exact title matches:

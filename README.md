@@ -10,7 +10,7 @@ The plugin registers 14 tools under the `goodreads` toolset:
 |------|---------|
 | `get_reading_stats` | High-level overview: book counts per shelf, average rating, review count |
 | `get_top_rated_books` | Books the user rated most highly |
-| `get_books_by_shelf` | List books on a specific shelf, sorted by rating |
+| `get_books_by_shelf` | List books on a specific shelf, sorted by rating (supports count-only mode) |
 | `get_shelf_list` | All shelves with book counts |
 | `get_books_by_genre` | Books matching a genre, optionally filtered by shelf or rating |
 | `get_genre_preferences` | Genre breakdown with average ratings and top-rated book per genre |
@@ -101,8 +101,9 @@ hermes restart
 Start a conversation and ask something like:
 
 > "What's on my to-read shelf?"
+> "How many books are on my to-read shelf?"
 
-The agent should call `get_books_by_shelf` and return your books. You can also check that the tools are registered by running `hermes tools` and looking for tools prefixed with `goodreads:`.
+The agent should call `get_books_by_shelf` and return your books. The second example uses `count_only` mode to return just the number without the full list. You can also check that the tools are registered by running `hermes tools` and looking for tools prefixed with `goodreads:`.
 
 ## How it works
 
